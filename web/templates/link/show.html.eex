@@ -1,0 +1,13 @@
+<h2>Show link</h2>
+
+<p>You've linked:</p>
+
+<p class="link-show__link">
+  <%= link @link.url, to: @link.url %>
+</p>
+
+<p>To:</p>
+
+<p class="link-show__link">
+  <%= link link_url(@conn, :visit, @link.hash), to: link_url(@conn, :visit, @link.hash) %>
+</p>
