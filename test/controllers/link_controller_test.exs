@@ -2,6 +2,7 @@ defmodule Warner.LinkControllerTest do
   use Warner.ConnCase
 
   alias Warner.Link
+  @valid_record %Link{hash: "hash", url: "http://cat.com/", warnings: []}
   @valid_attrs %{url: "some content", warnings_string: "cat, bat"}
   @invalid_attrs %{}
 
@@ -33,7 +34,7 @@ defmodule Warner.LinkControllerTest do
   end
 
   test "shows chosen resource", %{conn: conn} do
-    link = Repo.insert! %Link{hash: "hash", url: "http://cat.com/", warnings: []}
+    link = Repo.insert! @valid_record
     conn = get conn, link_path(conn, :show, link)
     assert html_response(conn, 200) =~ "Show link"
   end
@@ -68,5 +69,11 @@ defmodule Warner.LinkControllerTest do
     conn = delete conn, link_path(conn, :delete, link)
     assert redirected_to(conn) == link_path(conn, :index)
     refute Repo.get(Link, link.id)
+  end
+
+  test "redirects to the right link", %{conn: conn} do
+    link = Repo.insert! @valid_record
+    conn = get conn, "/v/#{link.hash}"
+    assert redirected_to(conn) == link.url
   end
 end

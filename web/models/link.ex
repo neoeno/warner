@@ -9,8 +9,8 @@ defmodule Warner.Link do
     timestamps
   end
 
-  @required_fields ~w(hash url warnings)
-  @optional_fields ~w()
+  @required_fields ~w(url)
+  @optional_fields ~w(warnings)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -19,8 +19,16 @@ defmodule Warner.Link do
   with no validation performed.
   """
   def changeset(model, params \\ :empty) do
-    model
-    |> cast(params, @required_fields, @optional_fields)
+    changeset = cast(model, params, @required_fields, @optional_fields)
+    changeset = case get_field(changeset, :warnings_string) do
+      nil -> change(changeset, %{warnings: []})
+      warnings_string -> change(changeset, %{warnings: split_warnings_string(warnings_string)})
+    end
+    delete_change(changeset, :warnings_string)
+    changeset = case get_field(changeset, :url) do
+      nil -> changeset
+      url -> change(changeset, %{hash: generate_hash(url)})
+    end
   end
 
   @doc """
@@ -28,7 +36,11 @@ defmodule Warner.Link do
 
   Might not necessarily use the url, but also might.
   """
-  def generate_hash(_) do
+  defp generate_hash(_) do
     SecureRandom.urlsafe_base64(6)
+  end
+
+  defp split_warnings_string(warnings_string) do
+    String.split(warnings_string, ",", trim: true)
   end
 end
