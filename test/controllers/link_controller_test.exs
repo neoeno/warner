@@ -2,7 +2,7 @@ defmodule Warner.LinkControllerTest do
   use Warner.ConnCase
 
   alias Warner.Link
-  @valid_attrs %{hash: "some content", url: "some content"}
+  @valid_attrs %{url: "some content", warnings_string: "cat, bat"}
   @invalid_attrs %{}
 
   setup do
@@ -22,8 +22,9 @@ defmodule Warner.LinkControllerTest do
 
   test "creates resource and redirects when data is valid", %{conn: conn} do
     conn = post conn, link_path(conn, :create), link: @valid_attrs
-    assert redirected_to(conn) == link_path(conn, :index)
-    assert Repo.get_by(Link, @valid_attrs)
+    new_link = Repo.get_by(Link, %{url: @valid_attrs.url})
+    assert new_link
+    assert redirected_to(conn) == link_path(conn, :show, new_link)
   end
 
   test "does not create resource and renders errors when data is invalid", %{conn: conn} do
@@ -32,7 +33,7 @@ defmodule Warner.LinkControllerTest do
   end
 
   test "shows chosen resource", %{conn: conn} do
-    link = Repo.insert! %Link{}
+    link = Repo.insert! %Link{hash: "hash", url: "http://cat.com/", warnings: []}
     conn = get conn, link_path(conn, :show, link)
     assert html_response(conn, 200) =~ "Show link"
   end
@@ -53,7 +54,7 @@ defmodule Warner.LinkControllerTest do
     link = Repo.insert! %Link{}
     conn = put conn, link_path(conn, :update, link), link: @valid_attrs
     assert redirected_to(conn) == link_path(conn, :show, link)
-    assert Repo.get_by(Link, @valid_attrs)
+    assert Repo.get_by(Link, %{url: @valid_attrs.url})
   end
 
   test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
