@@ -11,3 +11,11 @@
 <p class="link-show__link">
   <%= link link_url(@conn, :visit, @link.hash), to: link_url(@conn, :visit, @link.hash) %>
 </p>
+
+<p>With warnings:</p>
+
+<ul>
+  <%= for warning <- @link.warnings do %>
+    <li><%= warning %></li>
+  <% end %>
+</ul>

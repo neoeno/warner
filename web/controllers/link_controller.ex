@@ -15,9 +15,10 @@ defmodule Warner.LinkController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, %{"link" => %{"url" => url}}) do
+  def create(conn, %{"link" => %{"url" => url, "warnings_string" => warnings_string}}) do
+    warnings = warnings_string |> String.split(",", trim: true)
     changeset = Link.changeset(%Link{},
-                               %{"url" => url, "hash" => Link.generate_hash(url)})
+                               %{"url" => url, "hash" => Link.generate_hash(url), "warnings" => warnings})
 
     case Repo.insert(changeset) do
       {:ok, link} ->
@@ -27,6 +28,12 @@ defmodule Warner.LinkController do
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
+  end
+
+  def create(conn, %{"link" => link_params}) do
+    changeset = Link.changeset(%Link{}, link_params)
+    Repo.insert(changeset)
+    render(conn, "new.html", changeset: changeset)
   end
 
   def show(conn, %{"id" => id}) do
@@ -46,9 +53,10 @@ defmodule Warner.LinkController do
     render(conn, "edit.html", link: link, changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "link" => link_params}) do
+  def update(conn, %{"id" => id, "link" => %{"url" => url, "warnings_string" => warnings_string}}) do
+    warnings = warnings_string |> String.split(",", trim: true)
     link = Repo.get!(Link, id)
-    changeset = Link.changeset(link, link_params)
+    changeset = Link.changeset(link, %{"url" => url, "hash" => Link.generate_hash(url), "warnings" => warnings})
 
     case Repo.update(changeset) do
       {:ok, link} ->
@@ -58,6 +66,14 @@ defmodule Warner.LinkController do
       {:error, changeset} ->
         render(conn, "edit.html", link: link, changeset: changeset)
     end
+  end
+
+  def update(conn, %{"id" => id, "link" => link_params}) do
+    link = Repo.get!(Link, id)
+    changeset = Link.changeset(link, link_params)
+    Repo.update(changeset)
+
+    render(conn, "edit.html", link: link, changeset: changeset)
   end
 
   def delete(conn, %{"id" => id}) do

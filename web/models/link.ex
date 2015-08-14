@@ -4,11 +4,12 @@ defmodule Warner.Link do
   schema "links" do
     field :hash, :string
     field :url, :string
+    field :warnings, {:array, :string}
 
     timestamps
   end
 
-  @required_fields ~w(hash url)
+  @required_fields ~w(hash url warnings)
   @optional_fields ~w()
 
   @doc """
