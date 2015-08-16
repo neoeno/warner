@@ -9,7 +9,7 @@
 <p>To:</p>
 
 <p class="link-show__link">
-  <%= link link_url(@conn, :visit, @link.hash), to: link_url(@conn, :visit, @link.hash) %>
+  <%= link link_url(@conn, :show, @link.hash), to: link_url(@conn, :show, @link.hash) %>
 </p>
 
 <p>With warnings:</p>

@@ -1,0 +1,17 @@
+<p>You've visited a link protected by TwCW</p>
+
+<p>This page comes with the following warnings:</p>
+
+<ul>
+  <%= for warning <- @link.warnings do %>
+    <li><%= warning %></li>
+  <% end %>
+</ul>
+
+<p><%= link "Click here to continue to the link.", to: @link.url %></p>
+
+<hr>
+
+<p>Don't need warning in future?</p>
+
+<p><%= link "Click here to disable all warnings.", to: "#" %></p>

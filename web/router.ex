@@ -18,7 +18,8 @@ defmodule Warner.Router do
 
     get "/", LinkController, :new
     resources "/links", LinkController
-    get "/v/:hash", LinkController, :visit
+    get "/v/:hash", VisitController, :show
+    post "/preferences", PreferenceController, :update
   end
 
   # Other scopes may use custom stacks.

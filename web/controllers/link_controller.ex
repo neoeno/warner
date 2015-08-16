@@ -33,12 +33,6 @@ defmodule Warner.LinkController do
     render(conn, "show.html", link: link)
   end
 
-  def visit(conn, %{"hash" => hash}) do
-    link = Repo.get_by!(Link, hash: hash)
-    conn
-    |> redirect(external: link.url)
-  end
-
   def edit(conn, %{"id" => id}) do
     link = Repo.get!(Link, id)
     changeset = Link.changeset(link)

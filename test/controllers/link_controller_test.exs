@@ -70,10 +70,4 @@ defmodule Warner.LinkControllerTest do
     assert redirected_to(conn) == link_path(conn, :index)
     refute Repo.get(Link, link.id)
   end
-
-  test "redirects to the right link", %{conn: conn} do
-    link = Repo.insert! @valid_record
-    conn = get conn, "/v/#{link.hash}"
-    assert redirected_to(conn) == link.url
-  end
 end
